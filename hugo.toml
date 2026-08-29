@@ -1,4 +1,4 @@
-baseURL = 'https://example.org/'
+baseURL = 'https://whatisnext0531-spec.github.io/AI-Study/'
 locale = 'en-us'
 title = 'AI Study Notes'
 theme = "ananke"
