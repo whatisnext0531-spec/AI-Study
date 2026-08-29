@@ -5,10 +5,20 @@
     <loc>http://localhost:1313/</loc>
     <lastmod>2026-08-16T18:07:02+09:00</lastmod>
   </url><url>
+    <loc>http://localhost:1313/projects/</loc>
+    <lastmod>2026-08-16T18:06:57+09:00</lastmod>
+  </url><url>
     <loc>http://localhost:1313/study/</loc>
     <lastmod>2026-08-16T18:06:51+09:00</lastmod>
   </url><url>
+    <loc>http://localhost:1313/study/note-01/</loc>
+    <lastmod>2026-08-16T18:06:51+09:00</lastmod>
+  </url><url>
+    <loc>http://localhost:1313/projects/network-intrusion/</loc>
+  </url><url>
     <loc>http://localhost:1313/categories/</loc>
+  </url><url>
+    <loc>http://localhost:1313/study/note-02/</loc>
   </url><url>
     <loc>http://localhost:1313/tags/</loc>
   </url>

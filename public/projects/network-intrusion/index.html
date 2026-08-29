@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head><script src="/livereload.js?mindelay=10&amp;v=2&amp;port=1313&amp;path=livereload" data-no-instant defer></script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    
+    <title>AI Study Notes</title>
+    <meta name="viewport" content="width=device-width,minimum-scale=1">
+    <meta name="description" content="대용량 네트워크 트래픽 데이터를 활용한 다중 분류 경진대회. 첫 제출과 최종 제출 코드를 비교하며 Feature Engineering, 5-Fold 검증, LightGBM·Random Forest 앙상블을 통한 개선 과정 정리">
+    <meta name="generator" content="Hugo 0.161.1">
+    
+    
+    
+      <meta name="robots" content="noindex, nofollow">
+    
+    
+
+    <link rel="stylesheet" href="/ananke/css/main.css">
+    <script>
+  (function () {
+    "use strict";
+
+    
+    
+    function revealButtons() {
+      var buttons = document.querySelectorAll(".code-block .code-copy[hidden]");
+      for (var i = 0; i < buttons.length; i++) {
+        buttons[i].hidden = false;
+      }
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", revealButtons);
+    } else {
+      revealButtons();
+    }
+
+    function flash(button) {
+      var label = button.querySelector(".code-copy-label");
+      var previous = label ? label.textContent : null;
+      button.classList.add("is-copied");
+      if (label) label.textContent = "Copied";
+      window.setTimeout(function () {
+        button.classList.remove("is-copied");
+        if (label && previous !== null) label.textContent = previous;
+      }, 2000);
+    }
+
+    function legacyCopy(text) {
+      var area = document.createElement("textarea");
+      area.value = text;
+      area.setAttribute("readonly", "");
+      area.style.position = "absolute";
+      area.style.left = "-9999px";
+      document.body.appendChild(area);
+      area.select();
+      var ok = false;
+      try {
+        ok = document.execCommand("copy");
+      } catch (e) {
+        ok = false;
+      }
+      document.body.removeChild(area);
+      return ok;
+    }
+
+    function copyFrom(button) {
+      var container = button.closest(".code-block");
+      if (!container) return;
+      var pre = container.querySelector("pre");
+      if (!pre) return;
+      var source = pre.querySelector("code") || pre;
+      var text = source.innerText;
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(
+          function () { flash(button); },
+          function () { if (legacyCopy(text)) flash(button); }
+        );
+      } else if (legacyCopy(text)) {
+        flash(button);
+      }
+    }
+
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest(".code-copy");
+      if (button) copyFrom(button);
+    });
+  })();
+</script>
+
+    
+      
+
+    
+
+    
+
+    
+      <link rel="canonical" href="http://localhost:1313/projects/network-intrusion/">
+    
+
+    
+    
+    <meta property="og:url" content="http://localhost:1313/projects/network-intrusion/">
+  <meta property="og:site_name" content="AI Study Notes">
+  <meta property="og:title" content="AI Study Notes">
+  <meta property="og:description" content="대용량 네트워크 트래픽 데이터를 활용한 다중 분류 경진대회. 첫 제출과 최종 제출 코드를 비교하며 Feature Engineering, 5-Fold 검증, LightGBM·Random Forest 앙상블을 통한 개선 과정 정리">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="projects">
+
+  <meta itemprop="name" content="AI Study Notes">
+  <meta itemprop="description" content="대용량 네트워크 트래픽 데이터를 활용한 다중 분류 경진대회. 첫 제출과 최종 제출 코드를 비교하며 Feature Engineering, 5-Fold 검증, LightGBM·Random Forest 앙상블을 통한 개선 과정 정리">
+  <meta itemprop="wordCount" content="1573">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="AI Study Notes">
+  <meta name="twitter:description" content="대용량 네트워크 트래픽 데이터를 활용한 다중 분류 경진대회. 첫 제출과 최종 제출 코드를 비교하며 Feature Engineering, 5-Fold 검증, LightGBM·Random Forest 앙상블을 통한 개선 과정 정리">
+
+	
+  </head><body class="ma0 avenir bg-near-white development is-page is-page page-network-intrusion"><header class="custom-home-header"
+        style="background-image: url('/images/study-banner.png');">
+
+  <div class="custom-home-overlay">
+    <nav class="pv3 ph3 ph4-ns" role="navigation">
+  <div class="flex-l center items-center justify-between">
+    <a href="/" class="f3 fw2 hover-white white-90 dib no-underline">
+      
+        AI Study Notes
+      
+    </a>
+    <div class="flex-l items-center">
+      
+
+      
+        <ul class="pl0 mr3">
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white white-90 no-underline" href="/" title="Home page">
+              Home
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white white-90 no-underline" href="/study/" title="Study page">
+              Study
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white white-90 no-underline" href="/projects/" title="Projects page">
+              Projects
+            </a>
+          </li>
+          
+          <li class="list f5 f4-ns fw4 dib pr3">
+            <a class="hover-white white-90 no-underline" href="" title="About page">
+              About
+            </a>
+          </li>
+          
+        </ul>
+      
+      <div class="ananke-socials"></div>
+
+    </div>
+  </div>
+</nav>
+
+  </div>
+
+</header><main class="pb7" role="main">
+
+<main class="project-single-page">
+
+  <article>
+    <h1 id="네트워크-침입-탐지-머신러닝-분류-미니-경진대회">네트워크 침입 탐지 머신러닝 분류 미니 경진대회</h1>
+<h2 id="프로젝트-개요">프로젝트 개요</h2>
+<p>네트워크 패킷 트래픽 데이터를 이용하여 정상 트래픽과 여러 유형의 네트워크 공격을 분류하는 머신러닝 미니 경진대회</p>
+<p>경진대회 시작 전 머신러닝 분류 문제 해결을 위한 전체 작업 순서를 정리하고, 해당 순서에 따라 데이터 확인 → 전처리 → 모델링 → 제출 과정 진행</p>
+<p>진행 중 모든 코드 변경 사항을 기록하지는 못했기 때문에 경진대회 종료 후 <strong>첫 번째 제출 코드와 마지막 제출 코드를 비교하고, 성능 향상에 영향을 주었을 가능성이 있는 변화들을 AI를 활용하여 분석</strong></p>
+<hr>
+<h2 id="1-문제-정의">1. 문제 정의</h2>
+<h3 id="예측-목표">예측 목표</h3>
+<p>네트워크 패킷 트래픽을 분석하여 각 트래픽이 정상 상태인지, 또는 어떤 유형의 네트워크 공격인지 예측하는 <strong>다중 분류 문제</strong></p>
+<p>Target인 <code>Label</code>은 다음 5개 클래스로 구성</p>
+<ul>
+<li>Benign</li>
+<li>DDOS</li>
+<li>DoS</li>
+<li>Brute Force</li>
+<li>Infiltration</li>
+</ul>
+<h3 id="데이터-규모">데이터 규모</h3>
+<ul>
+<li>Train: <strong>4,638,804행 × 43열</strong></li>
+<li>Test: <strong>1,159,701행 × 43열</strong></li>
+</ul>
+<p>Train 데이터만 약 463만 건에 해당하는 대용량 데이터</p>
+<p>→ 모델의 예측 성능뿐만 아니라 학습 시간과 메모리 사용량도 함께 고려할 필요</p>
+<h3 id="클래스-불균형">클래스 불균형</h3>
+<p>EDA를 통해 Target의 클래스 비율 확인</p>
+<table>
+  <thead>
+      <tr>
+          <th>Label</th>
+          <th style="text-align: right">비율</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Benign</td>
+          <td style="text-align: right">약 68.81%</td>
+      </tr>
+      <tr>
+          <td>DDOS</td>
+          <td style="text-align: right">약 11.86%</td>
+      </tr>
+      <tr>
+          <td>DoS</td>
+          <td style="text-align: right">약 11.17%</td>
+      </tr>
+      <tr>
+          <td>Brute Force</td>
+          <td style="text-align: right">약 6.58%</td>
+      </tr>
+      <tr>
+          <td>Infiltration</td>
+          <td style="text-align: right">약 1.59%</td>
+      </tr>
+  </tbody>
+</table>
+<p>정상 트래픽인 Benign이 약 69%를 차지한 반면 Infiltration은 약 1.6%에 불과한 불균형 데이터</p>
+<p>→ Accuracy만 확인하기보다 상대적으로 적은 공격 클래스의 분류 성능도 함께 고려할 필요</p>
+<p>최종 코드에서는 Benign을 제외한 공격 클래스의 F1-score를 <code>weighted</code> 방식으로 계산하는 별도의 평가 함수 사용</p>
+<hr>
+<h2 id="2-분석-순서">2. 분석 순서</h2>
+<p>모델을 바로 학습하기보다 전체 작업 순서를 먼저 정리</p>
+<ol>
+<li>문제 정의 및 Target·평가지표 확인</li>
+<li>데이터 로드 및 기본 구조 확인</li>
+<li>EDA와 클래스 불균형 확인</li>
+<li>Train / Validation 분할</li>
+<li>결측치·범주형 변수 등 데이터 전처리</li>
+<li>Feature Engineering</li>
+<li>모델 학습 및 검증</li>
+<li>앙상블과 최종 Test 예측</li>
+<li>제출 파일 확인</li>
+</ol>
+<p>실제 분석 과정에서는 데이터의 특성과 모델 결과에 따라 일부 과정 추가 및 변경</p>
+<hr>
+<h2 id="3-기본-전처리">3. 기본 전처리</h2>
+<h3 id="unique_id-제거">unique_id 제거</h3>
+<p><code>unique_id</code>는 각 행을 구별하기 위한 식별자로 문자와 숫자가 섞인 문자열 형태</p>
+<p>예측에 사용할 Feature라기보다 제출 시 각 행을 식별하기 위해 필요한 값으로 판단</p>
+<p>→ 제출용 ID로 별도 보관한 뒤 Train과 Test에서는 제거</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>train_id <span style="color:#f92672">=</span> train[<span style="color:#e6db74">&#39;unique_id&#39;</span>]
+</span></span><span style="display:flex;"><span>test_id <span style="color:#f92672">=</span> test[<span style="color:#e6db74">&#39;unique_id&#39;</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>train <span style="color:#f92672">=</span> train<span style="color:#f92672">.</span>drop(columns<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;unique_id&#39;</span>], errors<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ignore&#39;</span>)
+</span></span><span style="display:flex;"><span>test <span style="color:#f92672">=</span> test<span style="color:#f92672">.</span>drop(columns<span style="color:#f92672">=</span>[<span style="color:#e6db74">&#39;unique_id&#39;</span>], errors<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;ignore&#39;</span>)</span></span></code></pre></div>
+  </div><p>데이터에 존재할 수 있는 무한대 값은 이후 처리를 위해 결측치로 변환</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>train <span style="color:#f92672">=</span> train<span style="color:#f92672">.</span>replace([np<span style="color:#f92672">.</span>inf, <span style="color:#f92672">-</span>np<span style="color:#f92672">.</span>inf], np<span style="color:#f92672">.</span>nan)
+</span></span><span style="display:flex;"><span>test <span style="color:#f92672">=</span> test<span style="color:#f92672">.</span>replace([np<span style="color:#f92672">.</span>inf, <span style="color:#f92672">-</span>np<span style="color:#f92672">.</span>inf], np<span style="color:#f92672">.</span>nan)</span></span></code></pre></div>
+  </div><hr>
+<h2 id="4-label-오타-처리">4. Label 오타 처리</h2>
+<p>원본 데이터에 <code>Infilteration</code>이라는 Label 존재</p>
+<p>학습 과정에서는 이를 올바른 표기인 <code>Infiltration</code>으로 수정</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>train[<span style="color:#e6db74">&#39;Label&#39;</span>] <span style="color:#f92672">=</span> train[<span style="color:#e6db74">&#39;Label&#39;</span>]<span style="color:#f92672">.</span>replace({
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;Infilteration&#39;</span>: <span style="color:#e6db74">&#39;Infiltration&#39;</span>
+</span></span><span style="display:flex;"><span>})</span></span></code></pre></div>
+  </div><p>처음에는 단순한 오타로 판단하여 수정</p>
+<p>그러나 이후 <strong>학습 과정에서 사용하는 Label과 실제 제출 시스템이 요구하는 Label 형식은 다를 수 있다는 점 확인</strong></p>
+<p>→ 최종 제출 과정에서 별도의 Label 복원 과정 추가</p>
+<hr>
+<h2 id="5-첫-번째-제출">5. 첫 번째 제출</h2>
+<p>첫 번째 제출에서는 비교적 단순한 구조의 모델링 진행</p>
+<h3 id="데이터-분할">데이터 분할</h3>
+<p>Train 데이터를 8:2로 분할하고 클래스 비율 유지를 위해 <code>stratify</code> 적용</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>X_train, X_val, y_train, y_val <span style="color:#f92672">=</span> train_test_split(
+</span></span><span style="display:flex;"><span>    X,
+</span></span><span style="display:flex;"><span>    y_encoded,
+</span></span><span style="display:flex;"><span>    test_size<span style="color:#f92672">=</span><span style="color:#ae81ff">0.2</span>,
+</span></span><span style="display:flex;"><span>    random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>,
+</span></span><span style="display:flex;"><span>    stratify<span style="color:#f92672">=</span>y_encoded
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><p>→ 클래스 불균형을 고려한 Train / Validation 분할</p>
+<h3 id="timestamp-가공">Timestamp 가공</h3>
+<p>첫 번째 제출에서는 Timestamp에서 두 가지 시간 정보 추출</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Hour&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>hour
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;DayOfWeek&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>dayofweek</span></span></code></pre></div>
+  </div><ul>
+<li><code>Hour</code>: 트래픽 발생 시간대</li>
+<li><code>DayOfWeek</code>: 트래픽 발생 요일</li>
+</ul>
+<h3 id="scaling">Scaling</h3>
+<p>수치형 변수에 <code>RobustScaler</code> 적용</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>scaler <span style="color:#f92672">=</span> RobustScaler()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>X_train[num_cols] <span style="color:#f92672">=</span> scaler<span style="color:#f92672">.</span>fit_transform(X_train[num_cols])
+</span></span><span style="display:flex;"><span>X_val[num_cols] <span style="color:#f92672">=</span> scaler<span style="color:#f92672">.</span>transform(X_val[num_cols])
+</span></span><span style="display:flex;"><span>test[num_cols] <span style="color:#f92672">=</span> scaler<span style="color:#f92672">.</span>transform(test[num_cols])</span></span></code></pre></div>
+  </div><h3 id="lightgbm-단일-모델">LightGBM 단일 모델</h3>
+<p>첫 번째 제출 모델로 LightGBM 사용</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>model <span style="color:#f92672">=</span> LGBMClassifier(
+</span></span><span style="display:flex;"><span>    n_estimators<span style="color:#f92672">=</span><span style="color:#ae81ff">300</span>,
+</span></span><span style="display:flex;"><span>    random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>,
+</span></span><span style="display:flex;"><span>    class_weight<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;balanced&#39;</span>,
+</span></span><span style="display:flex;"><span>    n_jobs<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><p>클래스 불균형을 고려한 <code>class_weight='balanced'</code> 적용</p>
+<p>→ 이후 개선 과정의 기준 모델로 활용</p>
+<hr>
+<h2 id="6-feature-engineering">6. Feature Engineering</h2>
+<p>최종 코드에서는 기존 Feature를 그대로 사용하는 것에서 나아가 네트워크 트래픽의 특성을 새로운 변수로 표현</p>
+<h3 id="pkt_ratio">Pkt_Ratio</h3>
+<p>Forward와 Backward 방향으로 전달된 패킷 수의 비율</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df[<span style="color:#e6db74">&#39;Pkt_Ratio&#39;</span>] <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    df[<span style="color:#e6db74">&#39;Tot Fwd Pkts&#39;</span>] <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>    (df[<span style="color:#e6db74">&#39;Tot Bwd Pkts&#39;</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-5</span>)
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;float32&#39;</span>)</span></span></code></pre></div>
+  </div><p><code>Tot Fwd Pkts / Tot Bwd Pkts</code></p>
+<p>→ 패킷이 양방향으로 얼마나 불균형하게 오갔는지를 하나의 변수로 표현</p>
+<p>→ 정상 통신과 공격 트래픽의 통신 방향 패턴 차이를 반영하기 위한 파생변수</p>
+<h3 id="byte_ratio">Byte_Ratio</h3>
+<p>Forward와 Backward 방향으로 전송된 데이터량의 비율</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df[<span style="color:#e6db74">&#39;Byte_Ratio&#39;</span>] <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    df[<span style="color:#e6db74">&#39;TotLen Fwd Pkts&#39;</span>] <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>    (df[<span style="color:#e6db74">&#39;TotLen Bwd Pkts&#39;</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-5</span>)
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;float32&#39;</span>)</span></span></code></pre></div>
+  </div><p><code>TotLen Fwd Pkts / TotLen Bwd Pkts</code></p>
+<p>→ 통신 과정에서 어느 방향으로 데이터가 더 집중되어 있는지 표현</p>
+<h3 id="byte_per_pkt">Byte_per_Pkt</h3>
+<p>패킷 하나당 평균적인 데이터량</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>df[<span style="color:#e6db74">&#39;Byte_per_Pkt&#39;</span>] <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    df[<span style="color:#e6db74">&#39;Flow Byts/s&#39;</span>] <span style="color:#f92672">/</span>
+</span></span><span style="display:flex;"><span>    (df[<span style="color:#e6db74">&#39;Flow Pkts/s&#39;</span>] <span style="color:#f92672">+</span> <span style="color:#ae81ff">1e-5</span>)
+</span></span><span style="display:flex;"><span>)<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;float32&#39;</span>)</span></span></code></pre></div>
+  </div><p><code>Flow Byts/s / Flow Pkts/s</code></p>
+<p>→ 기존의 초당 Byte와 초당 Packet 정보를 결합하여 패킷 하나당 데이터량을 새로운 Feature로 표현</p>
+<h3 id="dst_port_freq">Dst_Port_Freq</h3>
+<p>목적지 Port가 Train 데이터에서 얼마나 자주 등장하는지를 나타내는 빈도 Feature 추가</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>port_counts <span style="color:#f92672">=</span> X[<span style="color:#e6db74">&#39;Dst Port&#39;</span>]<span style="color:#f92672">.</span>value_counts()
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>X[<span style="color:#e6db74">&#39;Dst_Port_Freq&#39;</span>] <span style="color:#f92672">=</span> X[<span style="color:#e6db74">&#39;Dst Port&#39;</span>]<span style="color:#f92672">.</span>map(port_counts)<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;int32&#39;</span>)
+</span></span><span style="display:flex;"><span>test[<span style="color:#e6db74">&#39;Dst_Port_Freq&#39;</span>] <span style="color:#f92672">=</span> test[<span style="color:#e6db74">&#39;Dst Port&#39;</span>]<span style="color:#f92672">.</span>map(port_counts)<span style="color:#f92672">.</span>fillna(<span style="color:#ae81ff">0</span>)<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;int32&#39;</span>)</span></span></code></pre></div>
+  </div><p>Port 값 자체뿐만 아니라 <strong>특정 Port가 데이터에서 얼마나 자주 사용되는지에 대한 정보 추가</strong></p>
+<hr>
+<h2 id="7-timestamp-feature-확장">7. Timestamp Feature 확장</h2>
+<p>첫 제출에서는 <code>Hour</code>, <code>DayOfWeek</code>만 사용</p>
+<p>최종 코드에서는 Timestamp를 보다 세밀하게 분해</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Month&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>month
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Day&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>day
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Hour&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>hour
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Minute&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>minute
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Second&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>second
+</span></span><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;DayOfWeek&#39;</span>] <span style="color:#f92672">=</span> combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>dt<span style="color:#f92672">.</span>dayofweek</span></span></code></pre></div>
+  </div><p>추가로 Timestamp 전체를 초 단위의 연속적인 숫자로 표현</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>combined[<span style="color:#e6db74">&#39;Timestamp_epoch&#39;</span>] <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    combined[<span style="color:#e6db74">&#39;Timestamp&#39;</span>]<span style="color:#f92672">.</span>astype(<span style="color:#e6db74">&#39;int64&#39;</span>) <span style="color:#f92672">//</span> <span style="color:#ae81ff">10</span><span style="color:#f92672">**</span><span style="color:#ae81ff">9</span>
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><p>→ 첫 번째 제출보다 시간 정보를 다양한 형태로 모델에 제공</p>
+<hr>
+<h2 id="8-전처리-전략-변경">8. 전처리 전략 변경</h2>
+<p>첫 제출에서 사용했던 일부 전처리를 최종 코드에서는 제거</p>
+<h3 id="고상관-변수-삭제--유지">고상관 변수 삭제 → 유지</h3>
+<p>첫 번째 코드에서는 일부 상관관계가 높은 Feature 제거</p>
+<p>최종 코드에서는 해당 Feature를 제거하지 않고 유지</p>
+<p>→ 트리 기반 모델에서는 Feature 간 상관관계가 높다는 이유만으로 반드시 제거할 필요가 없다는 점을 고려한 전략 변경</p>
+<h3 id="robustscaler-사용--제거">RobustScaler 사용 → 제거</h3>
+<p>첫 번째 제출에서는 수치형 변수에 <code>RobustScaler</code> 적용</p>
+<p>최종 학습 과정에서는 Scaling 제거</p>
+<p>LightGBM과 Random Forest 모두 결정트리 기반 모델로 Feature Scaling이 필수적이지 않은 모델</p>
+<p>→ 일괄적인 전처리 적용보다 <strong>모델의 특성에 필요한 전처리를 선택하는 방향으로 변경</strong></p>
+<hr>
+<h2 id="9-검증-방식-개선">9. 검증 방식 개선</h2>
+<h3 id="첫-번째-제출">첫 번째 제출</h3>
+<p>한 번의 Train / Validation 분할</p>
+<p><code>Stratified 8:2 Split</code></p>
+<h3 id="최종-제출">최종 제출</h3>
+<p><code>StratifiedKFold</code> 기반 5-Fold 교차검증 적용</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>skf <span style="color:#f92672">=</span> StratifiedKFold(
+</span></span><span style="display:flex;"><span>    n_splits<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>,
+</span></span><span style="display:flex;"><span>    shuffle<span style="color:#f92672">=</span><span style="color:#66d9ef">True</span>,
+</span></span><span style="display:flex;"><span>    random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span>
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><p>각 Fold에서 원본 데이터의 클래스 비율 유지</p>
+<p>→ 전체 데이터를 여러 번 Train과 Validation으로 활용</p>
+<p>→ 한 번의 Validation 결과에만 의존하지 않고 여러 데이터 분할에서 모델 성능 확인</p>
+<hr>
+<h2 id="10-lightgbm--random-forest-앙상블">10. LightGBM + Random Forest 앙상블</h2>
+<p>첫 제출에서는 LightGBM 단일 모델 사용</p>
+<p>최종 코드에서는 Random Forest 추가</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>rf_model <span style="color:#f92672">=</span> RandomForestClassifier(
+</span></span><span style="display:flex;"><span>    n_estimators<span style="color:#f92672">=</span><span style="color:#ae81ff">300</span>,
+</span></span><span style="display:flex;"><span>    max_depth<span style="color:#f92672">=</span><span style="color:#ae81ff">15</span>,
+</span></span><span style="display:flex;"><span>    min_samples_split<span style="color:#f92672">=</span><span style="color:#ae81ff">5</span>,
+</span></span><span style="display:flex;"><span>    class_weight<span style="color:#f92672">=</span><span style="color:#e6db74">&#39;balanced&#39;</span>,
+</span></span><span style="display:flex;"><span>    random_state<span style="color:#f92672">=</span><span style="color:#ae81ff">42</span> <span style="color:#f92672">+</span> fold,
+</span></span><span style="display:flex;"><span>    n_jobs<span style="color:#f92672">=-</span><span style="color:#ae81ff">1</span>
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><p>LightGBM과 Random Forest의 예측 확률을 결합하는 <strong>Soft Voting 방식 적용</strong></p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>val_proba_ensemble <span style="color:#f92672">=</span> (
+</span></span><span style="display:flex;"><span>    val_proba_lgb <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.6</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">+</span> val_proba_rf <span style="color:#f92672">*</span> <span style="color:#ae81ff">0.4</span>
+</span></span><span style="display:flex;"><span>)</span></span></code></pre></div>
+  </div><h3 id="앙상블-비율">앙상블 비율</h3>
+<p><strong>LightGBM 60% + Random Forest 40%</strong></p>
+<p>LightGBM을 주력 모델로 사용하면서 서로 다른 학습 방식을 가진 Random Forest의 예측 결과를 함께 반영</p>
+<p>Test 데이터 역시 각 Fold에서 생성된 예측 확률을 결합한 뒤 평균하여 최종 예측값 생성</p>
+<hr>
+<h2 id="11-제출-단계에서-발견한-label-문제">11. 제출 단계에서 발견한 Label 문제</h2>
+<p>이번 경진대회에서 모델 외적으로 가장 기억에 남았던 문제</p>
+<p>원본 데이터의 Label</p>
+<p><code>Infilteration</code></p>
+<p>학습 과정에서 수정한 Label</p>
+<p><code>Infiltration</code></p>
+<p>최종 코드에서는 제출 직전에 다시 원래 Label로 복원</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-python" data-lang="python"><span style="display:flex;"><span>test_preds_labels_fixed <span style="color:#f92672">=</span> [
+</span></span><span style="display:flex;"><span>    <span style="color:#e6db74">&#39;Infilteration&#39;</span> <span style="color:#66d9ef">if</span> label <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;Infiltration&#39;</span> <span style="color:#66d9ef">else</span> label
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">for</span> label <span style="color:#f92672">in</span> test_preds_labels
+</span></span><span style="display:flex;"><span>]</span></span></code></pre></div>
+  </div><p>처리 과정</p>
+<div class="code-block">
+    <button class="code-copy" type="button" hidden aria-label="Copy code to clipboard">
+      <span class="code-copy-label" aria-hidden="true">Copy</span>
+    </button>
+    <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>원본 데이터
+</span></span><span style="display:flex;"><span>Infilteration
+</span></span><span style="display:flex;"><span>      ↓
+</span></span><span style="display:flex;"><span>학습 단계
+</span></span><span style="display:flex;"><span>Infiltration
+</span></span><span style="display:flex;"><span>      ↓
+</span></span><span style="display:flex;"><span>제출 단계
+</span></span><span style="display:flex;"><span>Infilteration</span></span></code></pre></div>
+  </div><p>→ 모델 학습에 사용하는 Label뿐만 아니라 <strong>제출 파일의 Label과 형식이 채점 시스템의 기준과 일치하는지 확인할 필요</strong></p>
+<p>→ 모델링 이후의 제출 과정 역시 전체 머신러닝 파이프라인의 일부라는 점 확인</p>
+<hr>
+<h2 id="12-첫-제출과-마지막-제출-비교">12. 첫 제출과 마지막 제출 비교</h2>
+<table>
+  <thead>
+      <tr>
+          <th>항목</th>
+          <th>첫 번째 제출</th>
+          <th>마지막 제출</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>모델</td>
+          <td>LightGBM</td>
+          <td>LightGBM + Random Forest</td>
+      </tr>
+      <tr>
+          <td>검증</td>
+          <td>Stratified 8:2 Split</td>
+          <td>Stratified 5-Fold</td>
+      </tr>
+      <tr>
+          <td>LightGBM Tree 수</td>
+          <td>300</td>
+          <td>800</td>
+      </tr>
+      <tr>
+          <td>Random Forest</td>
+          <td>사용하지 않음</td>
+          <td>300 Trees</td>
+      </tr>
+      <tr>
+          <td>앙상블</td>
+          <td>없음</td>
+          <td>Soft Voting</td>
+      </tr>
+      <tr>
+          <td>앙상블 비율</td>
+          <td>-</td>
+          <td>LGBM 0.6 / RF 0.4</td>
+      </tr>
+      <tr>
+          <td>Pkt_Ratio</td>
+          <td>없음</td>
+          <td>추가</td>
+      </tr>
+      <tr>
+          <td>Byte_Ratio</td>
+          <td>없음</td>
+          <td>추가</td>
+      </tr>
+      <tr>
+          <td>Byte_per_Pkt</td>
+          <td>없음</td>
+          <td>추가</td>
+      </tr>
+      <tr>
+          <td>Dst_Port_Freq</td>
+          <td>없음</td>
+          <td>추가</td>
+      </tr>
+      <tr>
+          <td>Timestamp</td>
+          <td>Hour, DayOfWeek</td>
+          <td>시간 Feature 세분화 + Epoch</td>
+      </tr>
+      <tr>
+          <td>일부 고상관 변수</td>
+          <td>삭제</td>
+          <td>유지</td>
+      </tr>
+      <tr>
+          <td>RobustScaler</td>
+          <td>사용</td>
+          <td>제거</td>
+      </tr>
+      <tr>
+          <td>제출 Label 복원</td>
+          <td>없음</td>
+          <td>적용</td>
+      </tr>
+  </tbody>
+</table>
+<p>첫 번째 제출 → 마지막 제출 과정에서 단순한 하이퍼파라미터 수정이 아닌 <strong>Feature Engineering, 검증 방식, 모델 구성, 제출 과정까지 전체 파이프라인의 변화</strong></p>
+<hr>
+<h2 id="13-점수-향상-요인-분석">13. 점수 향상 요인 분석</h2>
+<p>경진대회 중 약 <strong>0.94 부근에서 점수 정체</strong></p>
+<p>이후 첫 번째 제출과 마지막 제출 사이에 적용된 주요 변화</p>
+<ul>
+<li>비율 기반 파생변수 추가</li>
+<li>Dst Port 빈도 Feature 추가</li>
+<li>Timestamp Feature 확장</li>
+<li>Stratified 5-Fold 교차검증 적용</li>
+<li>LightGBM + Random Forest 앙상블</li>
+<li>전처리 방식 변경</li>
+<li>제출 Label 처리 수정</li>
+</ul>
+<p>그러나 각 변경 사항을 하나씩 적용하면서 모든 점수를 기록하지 못한 상황</p>
+<p>→ 개별 변경 사항이 최종 점수 상승에 얼마나 기여했는지 정확한 분리 불가</p>
+<p>→ <code>Pkt_Ratio 추가로 몇 점 상승</code>, <code>Random Forest 추가로 몇 점 상승</code>과 같은 인과관계 판단 불가</p>
+<p>→ 여러 변경이 함께 적용되면서 최종 성능이 개선되었을 가능성</p>
+<p><strong>가장 큰 아쉬움: 실험별 변경 사항과 점수를 체계적으로 기록하지 못한 점</strong></p>
+<hr>
+<h2 id="14-프로젝트를-통해-배운-점">14. 프로젝트를 통해 배운 점</h2>
+<h3 id="전체-파이프라인의-중요성">전체 파이프라인의 중요성</h3>
+<p>처음에는 모델 성능 향상에 집중했지만 실제 작업을 통해 확인한 전체 과정</p>
+<p><strong>데이터 → 전처리 → Feature → 모델 → 검증 → 예측 → 제출</strong></p>
+<p>Label 문제를 통해 모델 학습 이후의 제출 파일까지 하나의 파이프라인으로 확인해야 한다는 점 경험</p>
+<h3 id="feature-engineering의-의미">Feature Engineering의 의미</h3>
+<p>기존 Feature를 그대로 사용하는 것과 기존 변수의 관계를 새로운 Feature로 표현하는 것의 차이 확인</p>
+<p><code>Pkt_Ratio</code>, <code>Byte_Ratio</code>, <code>Byte_per_Pkt</code> 생성 과정에서 단순한 변수 추가보다 <strong>데이터의 의미를 모델이 활용할 수 있는 형태로 표현하는 과정의 중요성 확인</strong></p>
+<h3 id="모델에-맞는-전처리-선택">모델에 맞는 전처리 선택</h3>
+<p>첫 제출에서는 Scaling과 일부 고상관 변수 제거 적용</p>
+<p>최종 코드에서는 일부 과정 제거</p>
+<p>→ 일반적인 전처리 방법을 일괄적으로 적용하기보다 <strong>데이터와 모델의 특성을 고려한 선택의 필요성 확인</strong></p>
+<h3 id="검증-방식의-중요성">검증 방식의 중요성</h3>
+<p>단일 Train / Validation 분할에서 Stratified 5-Fold로 변경</p>
+<p>→ 모델 자체뿐만 아니라 <strong>모델의 성능을 어떤 방식으로 검증할 것인지도 중요한 모델링 과정</strong></p>
+<hr>
+<h2 id="15-아쉬웠던-점과-다음-목표">15. 아쉬웠던 점과 다음 목표</h2>
+<h3 id="아쉬웠던-점">아쉬웠던 점</h3>
+<p>실험 과정에 대한 체계적인 기록 부족</p>
+<p>코드를 수정하면서 제출 점수를 확인했지만 다음 정보들을 매번 기록하지 못함</p>
+<ul>
+<li>변경한 코드</li>
+<li>변경 이유</li>
+<li>변경 전 Validation 점수</li>
+<li>변경 후 Validation 점수</li>
+<li>실제 제출 점수</li>
+</ul>
+<p>→ 첫 번째 제출과 마지막 제출의 비교는 가능하지만 중간 단계의 개별 변화가 성능에 미친 영향 분석에는 한계</p>
+<h3 id="다음-경진대회에서-개선할-점">다음 경진대회에서 개선할 점</h3>
+<p>실험별 변경 사항과 결과 기록</p>
+<table>
+  <thead>
+      <tr>
+          <th>실험</th>
+          <th>변경 사항</th>
+          <th style="text-align: right">CV / Validation</th>
+          <th style="text-align: right">제출 점수</th>
+          <th>판단</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>01</td>
+          <td>Baseline</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>기준</td>
+      </tr>
+      <tr>
+          <td>02</td>
+          <td>파생변수 추가</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>비교</td>
+      </tr>
+      <tr>
+          <td>03</td>
+          <td>Timestamp 확장</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>비교</td>
+      </tr>
+      <tr>
+          <td>04</td>
+          <td>5-Fold 적용</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>비교</td>
+      </tr>
+      <tr>
+          <td>05</td>
+          <td>Random Forest 추가</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>비교</td>
+      </tr>
+      <tr>
+          <td>06</td>
+          <td>Soft Voting</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>비교</td>
+      </tr>
+      <tr>
+          <td>07</td>
+          <td>Label 처리 수정</td>
+          <td style="text-align: right">-</td>
+          <td style="text-align: right">-</td>
+          <td>최종</td>
+      </tr>
+  </tbody>
+</table>
+<p>다음 프로젝트의 목표</p>
+<p><strong>가설 설정 → 변경 → 실험 → 결과 → 판단</strong></p>
+<p>단순히 가장 높은 점수의 최종 코드만 남기는 것이 아니라 <strong>성능 개선 과정과 판단 근거까지 기록하는 프로젝트 진행</strong></p>
+
+  </article>
+
+</main>
+
+</main><footer class="bg-black bottom-0 w-100 pa3" role="contentinfo">
+  <div class="flex justify-between">
+  <a class="f4 fw4 hover-white white-70 dn dib-ns pv2 ph3 no-underline" href="http://localhost:1313/" >
+    &copy;  AI Study Notes 2026 
+  </a>
+    <div><div class="ananke-socials"></div>
+</div>
+  </div>
+</footer>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

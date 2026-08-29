@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Projects on AI Study Notes</title>
+    <link>http://localhost:1313/projects/</link>
+    <description>Recent content in Projects on AI Study Notes</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 01 Jan 0001 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/projects/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title></title>
+      <link>http://localhost:1313/projects/network-intrusion/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/projects/network-intrusion/</guid>
+      <description>&lt;h1 id=&#34;네트워크-침입-탐지-머신러닝-분류-미니-경진대회&#34;&gt;네트워크 침입 탐지 머신러닝 분류 미니 경진대회&lt;/h1&gt;&#xA;&lt;h2 id=&#34;프로젝트-개요&#34;&gt;프로젝트 개요&lt;/h2&gt;&#xA;&lt;p&gt;네트워크 패킷 트래픽 데이터를 이용하여 정상 트래픽과 여러 유형의 네트워크 공격을 분류하는 머신러닝 미니 경진대회&lt;/p&gt;&#xA;&lt;p&gt;경진대회 시작 전 머신러닝 분류 문제 해결을 위한 전체 작업 순서를 정리하고, 해당 순서에 따라 데이터 확인 → 전처리 → 모델링 → 제출 과정 진행&lt;/p&gt;&#xA;&lt;p&gt;진행 중 모든 코드 변경 사항을 기록하지는 못했기 때문에 경진대회 종료 후 &lt;strong&gt;첫 번째 제출 코드와 마지막 제출 코드를 비교하고, 성능 향상에 영향을 주었을 가능성이 있는 변화들을 AI를 활용하여 분석&lt;/strong&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>

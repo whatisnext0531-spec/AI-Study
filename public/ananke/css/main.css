@@ -7356,6 +7356,73 @@ footer a,
 footer p {
   color: #4A443D !important;
 }
+main p,
+main li {
+  font-size: 15px;
+  line-height: 1.7;
+}
+main h2 {
+  font-size: 26px;
+  line-height: 1.4;
+}
+main h3 {
+  font-size: 21px;
+  line-height: 1.4;
+}
+main h4 {
+  font-size: 18px;
+}
+main ul {
+  display: inline-block;
+  text-align: left;
+  padding-left: 24px;
+  margin-left: 0;
+}
+main ul li {
+  padding-left: 2px;
+}
+.custom-home-header {
+  min-height: 520px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.custom-home-overlay {
+  min-height: 520px;
+  background: rgba(0, 0, 0, 0.05);
+}
+.custom-home-header a {
+  color: #ffffff !important;
+}
+.custom-home-header a:hover {
+  color: #f3eadf !important;
+}
+.home-simple {
+  text-align: center;
+}
+.home-intro {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+.project-list-page,
+.project-list-page *,
+body:has(.project-list-page) main,
+body:has(.project-list-page) main * {
+  font-family:
+    Arial,
+    "Noto Sans KR",
+    "Malgun Gothic",
+    sans-serif !important;
+}
+.project-single-page,
+.project-single-page * {
+  font-family:
+    Arial,
+    "Noto Sans KR",
+    "Malgun Gothic",
+    sans-serif !important;
+}
 /*! TACHYONS v4.12.0 | http://tachyons.io */
 /*! normalize.css v8.0.0 | MIT License | github.com/necolas/normalize.css */
 /*# sourceMappingURL=main.css.map */

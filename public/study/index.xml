@@ -6,7 +6,21 @@
     <description>Recent content in Study on AI Study Notes</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate></lastBuildDate>
+    <lastBuildDate>Sun, 16 Aug 2026 18:06:51 +0900</lastBuildDate>
     <atom:link href="http://localhost:1313/study/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Study Note 01</title>
+      <link>http://localhost:1313/study/note-01/</link>
+      <pubDate>Sun, 16 Aug 2026 18:06:51 +0900</pubDate>
+      <guid>http://localhost:1313/study/note-01/</guid>
+      <description>&lt;a href=&#34;search-engine.png&#34; target=&#34;_blank&#34;&gt;&#xD;&#xA;  &lt;img src=&#34;search-engine.png&#34; alt=&#34;검색엔진의 작동 과정&#34;&gt;&#xD;&#xA;&lt;/a&gt;&#xD;&#xA;&lt;h2 id=&#34;검색엔진의-작동-과정&#34;&gt;검색엔진의 작동 과정&lt;/h2&gt;&#xA;&lt;p&gt;검색엔진의 기본적인 처리 과정은 크롤링(Crawling) → 색인 생성(Indexing) → 검색 및 랭킹(Ranking)의 흐름&lt;/p&gt;&#xA;&lt;h3 id=&#34;크롤링crawling&#34;&gt;크롤링(Crawling)&lt;/h3&gt;&#xA;&lt;p&gt;검색엔진의 봇(Bot)이 웹페이지를 탐색하며 검색에 필요한 정보를 수집하는 과정&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;새로운 웹페이지 발견&lt;/li&gt;&#xA;&lt;li&gt;기존 페이지의 변경 사항 확인&lt;/li&gt;&#xA;&lt;li&gt;텍스트, 이미지 등의 콘텐츠 수집&lt;/li&gt;&#xA;&lt;li&gt;페이지에 포함된 링크를 따라 다른 페이지 탐색&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;쉽게 말하면 검색에 사용할 수많은 책을 수집하는 단계&lt;/p&gt;&#xA;&lt;h3 id=&#34;색인-생성indexing&#34;&gt;색인 생성(Indexing)&lt;/h3&gt;&#xA;&lt;p&gt;크롤링으로 수집한 정보를 분석하고 검색하기 쉬운 형태로 정리하여 저장하는 과정&lt;/p&gt;&#xA;&lt;p&gt;검색할 때마다 모든 웹페이지를 처음부터 확인하는 것은 매우 비효율적인 방식&lt;br&gt;&#xA;따라서 검색엔진은 미리 페이지의 정보를 분석하여 검색에 적합한 구조로 저장&lt;/p&gt;</description>
+    </item>
+    <item>
+      <title>Study Note 02</title>
+      <link>http://localhost:1313/study/note-02/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/study/note-02/</guid>
+      <description>&lt;h1 id=&#34;데이터-무결성과-통계적-가설-검정&#34;&gt;데이터 무결성과 통계적 가설 검정&lt;/h1&gt;&#xA;&lt;h2 id=&#34;데이터-무결성data-integrity&#34;&gt;데이터 무결성(Data Integrity)&lt;/h2&gt;&#xA;&lt;p&gt;데이터가 정확하고 일관된 상태를 유지하도록 하는 개념&lt;/p&gt;&#xA;&lt;h3 id=&#34;개체-무결성entity-integrity&#34;&gt;개체 무결성(Entity Integrity)&lt;/h3&gt;&#xA;&lt;p&gt;테이블의 각 행을 서로 구별할 수 있어야 한다는 원칙&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;기본키(Primary Key)를 이용한 데이터 식별&lt;/li&gt;&#xA;&lt;li&gt;기본키의 중복 불가&lt;/li&gt;&#xA;&lt;li&gt;기본키의 NULL 값 불가&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;p&gt;즉, &lt;strong&gt;모든 데이터가 고유하게 식별 가능한 상태&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;h3 id=&#34;참조-무결성referential-integrity&#34;&gt;참조 무결성(Referential Integrity)&lt;/h3&gt;&#xA;&lt;p&gt;서로 관련된 테이블 사이의 관계가 일관성을 유지해야 한다는 원칙&lt;/p&gt;&#xA;&lt;p&gt;외래키(Foreign Key)가 참조하는 값은 원칙적으로 참조 대상 테이블에 존재해야 하는 구조&lt;/p&gt;&#xA;&lt;hr&gt;&#xA;&lt;h1 id=&#34;통계적-가설-검정&#34;&gt;통계적 가설 검정&lt;/h1&gt;&#xA;&lt;p&gt;데이터에서 관찰된 차이가 우연에 의한 것인지, 통계적으로 의미가 있는지를 판단하는 방법&lt;/p&gt;</description>
+    </item>
   </channel>
 </rss>

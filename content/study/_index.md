@@ -1,8 +1,8 @@
 +++
-date = '2026-08-16T18:06:51+09:00'
-draft = false
 title = 'Study'
 +++
 
+
 # AI Study Records
 
+수업 시간에 기록한 필기들

@@ -1,0 +1,35 @@
+{{ define "main" }}
+
+<main class="study-list-page">
+
+  {{ with .Content }}
+    <div class="study-intro">
+      {{ . }}
+    </div>
+  {{ end }}
+
+  <div class="study-note-list">
+
+    {{ range .Pages.ByTitle }}
+
+      <article class="study-note-item">
+
+        <h2>
+          <a href="{{ .RelPermalink }}">
+            {{ .Title }}
+          </a>
+        </h2>
+
+        {{ with .Params.description }}
+          <p>{{ . }}</p>
+        {{ end }}
+
+      </article>
+
+    {{ end }}
+
+  </div>
+
+</main>
+
+{{ end }}

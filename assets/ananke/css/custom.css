@@ -58,3 +58,102 @@ footer a,
 footer p {
     color: #4A443D !important;
 }
+
+
+/* ========================================
+   본문 글자 크기 조정
+   ======================================== */
+
+/* 일반 본문 */
+main p,
+main li {
+    font-size: 15px;
+    line-height: 1.7;
+}
+
+/* 큰 소제목 */
+main h2 {
+    font-size: 26px;
+    line-height: 1.4;
+}
+
+/* 작은 소제목 */
+main h3 {
+    font-size: 21px;
+    line-height: 1.4;
+}
+
+/* 더 작은 제목 */
+main h4 {
+    font-size: 18px;
+}
+
+
+
+/* ========================================
+   글머리 목록 정렬 및 간격 조정
+   ======================================== */
+
+main ul {
+    display: inline-block;
+    text-align: left;
+    padding-left: 24px;
+    margin-left: 0;
+}
+
+main ul li {
+    padding-left: 2px;
+}
+
+/* 홈 상단 배너 */
+.custom-home-header {
+    min-height: 520px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.custom-home-overlay {
+    min-height: 520px;
+    background: rgba(0, 0, 0, 0.05);
+}
+
+/* 상단 메뉴 글씨 밝게 */
+.custom-home-header a {
+    color: #ffffff !important;
+}
+
+.custom-home-header a:hover {
+    color: #f3eadf !important;
+}
+
+/* 홈 화면 소개 글 가운데 정렬 */
+.home-simple {
+    text-align: center;
+}
+
+.home-intro {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* ========================================
+   Projects 페이지 글꼴 - 고딕체
+   ======================================== */
+
+.project-list-page,
+.project-list-page *,
+body:has(.project-list-page) main,
+body:has(.project-list-page) main * {
+    font-family: Arial, "Noto Sans KR", "Malgun Gothic", sans-serif !important;
+}
+
+/* ========================================
+   Projects 개별 글 - 고딕체
+   ======================================== */
+
+.project-single-page,
+.project-single-page * {
+    font-family: Arial, "Noto Sans KR", "Malgun Gothic", sans-serif !important;
+}
