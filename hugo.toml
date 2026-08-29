@@ -1,0 +1,32 @@
+baseURL = 'https://example.org/'
+locale = 'en-us'
+title = 'AI Study Notes'
+theme = "ananke"
+
+[params.ananke]
+custom_css = ["custom.css"]
+
+[[menus.main]]
+name = "Home"
+pageRef = "/"
+weight = 10
+
+[[menus.main]]
+name = "Study"
+pageRef = "/study/"
+weight = 20
+
+[[menus.main]]
+name = "Projects"
+pageRef = "/projects/"
+weight = 30
+
+[[menus.main]]
+name = "About"
+pageRef = "/about/"
+weight = 40
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true

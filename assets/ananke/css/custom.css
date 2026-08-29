@@ -1,0 +1,60 @@
+/* ========================================
+   AI Study - Warm Beige Theme
+   ======================================== */
+
+/* 전체 페이지 */
+body {
+    background-color: #F5EFE6;
+    color: #4A443D;
+}
+
+/* 상단 헤더 - Ananke의 검은색 배경 제거 */
+header,
+header.bg-black,
+.bg-black {
+    background-color: #DCCBB8 !important;
+}
+
+/* 헤더 제목 */
+header a,
+header .site-title {
+    color: #4A443D !important;
+}
+
+/* 메인 영역 */
+main {
+    background-color: #F8F3EC;
+}
+
+/* 제목 */
+h1, h2, h3, h4, h5, h6 {
+    color: #4A443D;
+}
+
+/* 본문 글자 */
+p,
+li {
+    color: #4A443D;
+}
+
+/* 링크 */
+a {
+    color: #8A6F52;
+}
+
+a:hover {
+    color: #5F4935;
+}
+
+/* Footer */
+footer,
+footer.bg-black {
+    background-color: #DCCBB8 !important;
+    color: #4A443D !important;
+}
+
+/* Footer 안의 글씨 */
+footer a,
+footer p {
+    color: #4A443D !important;
+}
