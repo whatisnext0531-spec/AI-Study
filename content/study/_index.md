@@ -6,8 +6,3 @@ title = 'Study'
 
 # AI Study Records
 
-## 검색엔진
-
-<a href="검색엔진.png" target="_blank">
-  <img src="검색엔진.png" alt="검색엔진 필기">
-</a>
